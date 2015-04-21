@@ -27,13 +27,50 @@ namespace Sprite_Packer {
         public SpriteSheet SpriteSheet { set; get; }
 
         public MainWindow( ) {
-            SpriteSheet = new SpriteSheet( );
+            SpriteSheet = new SpriteSheet( ) { Spacing = 5 };
             DataContext = this;
 
             InitializeComponent( );
 
             listAnimView.ItemsSource = SpriteSheet.AnimationList;
         }
+
+
+        public void UpdatePreview( object sender = null, RoutedEventArgs e = null ) {
+            SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
+
+            if( foo != null && SpriteSheet.AnimationList.Contains( foo ) ) {
+
+                canvasImage.Children.Clear( );
+
+                double x_size = SpriteSheet.Spacing;
+                double y_size = SpriteSheet.Spacing;
+
+                foreach( SpriteImage bar in foo.SpriteList ) {
+                    Image foobar = new Image( );
+                    foobar.Source = bar.Image;
+
+                    Canvas.SetTop( foobar, SpriteSheet.Spacing );
+                    Canvas.SetLeft( foobar, x_size );
+
+                    canvasImage.Children.Add( foobar );
+
+                    x_size += bar.Image.PixelWidth + SpriteSheet.Spacing;
+                    if( y_size < SpriteSheet.Spacing + SpriteSheet.Spacing + bar.Image.PixelHeight ) {
+                        y_size = SpriteSheet.Spacing + SpriteSheet.Spacing + bar.Image.PixelHeight;
+                    }
+                }
+
+                canvasImage.Width = x_size;
+                canvasImage.Height = y_size;
+            }
+        }
+
+
+        private void ListViewSelectionChange( object sender, SelectionChangedEventArgs e ) {
+            UpdatePreview( );
+        }
+
 
         private void Command_Execute_New( object sender, ExecutedRoutedEventArgs e ) {
 
@@ -46,38 +83,26 @@ namespace Sprite_Packer {
                 listAnimView.ItemsSource = SpriteSheet.AnimationList;
                 listSpriteView.ItemsSource = null;
             }
-        }
-        private void Command_CanExecute_New( object sender, CanExecuteRoutedEventArgs e ) {
-            e.CanExecute = true;
-        }
 
-        private void Command_Execute_Open( object sender, ExecutedRoutedEventArgs e ) {
-
+            UpdatePreview( );
         }
-        private void Command_CanExecute_Open( object sender, CanExecuteRoutedEventArgs e ) {
-            e.CanExecute = true;
-        }
-
         private void Command_Execute_Save( object sender, ExecutedRoutedEventArgs e ) {
 
         }
-        private void Command_CanExecute_Save( object sender, CanExecuteRoutedEventArgs e ) {
-            e.CanExecute = SpriteSheet.AnimationList.Count > 0;
-        }
-
         private void Command_Execute_Close( object sender, ExecutedRoutedEventArgs e ) {
             this.Close( );
         }
-        private void Command_CanExecute_Close( object sender, CanExecuteRoutedEventArgs e ) {
-            e.CanExecute = true;
-        }
 
-        private void btnAddAnim_Click( object sender, RoutedEventArgs e ) {
+
+        private void Command_Execute_AnimAdd( object sender, ExecutedRoutedEventArgs e ) {
             SpriteSheet.AnimationList.Add( new SpriteAnimation( ) );
         }
-        private void btnRemoveAnim_Click( object sender, RoutedEventArgs e ) {
+        private void Command_Execute_AnimEdit( object sender, ExecutedRoutedEventArgs e ) {
+
+        }
+        private void Command_Execute_AnimRemove( object sender, ExecutedRoutedEventArgs e ) {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
-            
+
             if( foo != null && SpriteSheet.AnimationList.Contains( foo ) ) {
 
                 foreach( SpriteImage bar in foo.SpriteList ) {
@@ -88,18 +113,27 @@ namespace Sprite_Packer {
 
                 SpriteSheet.AnimationList.RemoveAt( SpriteSheet.AnimationList.IndexOf( foo ) );
             }
+
+            UpdatePreview( );
         }
 
-        private void btnAddSprite_Click( object sender, RoutedEventArgs e ) {
+
+        private void Command_Execute_SpriteAdd( object sender, ExecutedRoutedEventArgs e ) {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
 
             if( foo != null && SpriteSheet.AnimationList.Contains( foo ) ) {
-                WriteableBitmap newBitmap = BitmapFactory.New( 1, 1 );
+                WriteableBitmap newBitmap = BitmapFactory.New( 32, 32 );
+                newBitmap.Clear( Colors.DarkGreen );
                 SpriteImage newSprite = new SpriteImage( ) { Image = newBitmap };
                 foo.AddSprite( newSprite );
             }
+
+            UpdatePreview( );
         }
-        private void btnRemoveSprite_Click( object sender, RoutedEventArgs e ) {
+        private void Command_Execute_SpriteEdit( object sender, ExecutedRoutedEventArgs e ) {
+
+        }
+        private void Command_Execute_SpriteRemove( object sender, ExecutedRoutedEventArgs e ) {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
 
             if( foo != null && SpriteSheet.AnimationList.Contains( foo ) ) {
@@ -112,9 +146,12 @@ namespace Sprite_Packer {
                     foo.SpriteList.RemoveAt( foo.SpriteList.IndexOf( bar ) );
                 }
             }
+
+            UpdatePreview( );
         }
 
-        private void btnUpSprite_Click( object sender, RoutedEventArgs e ) {
+
+        private void Command_Execute_SpriteMoveUp( object sender, ExecutedRoutedEventArgs e ) {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
 
             if( foo != null && SpriteSheet.AnimationList.Contains( foo ) ) {
@@ -124,12 +161,14 @@ namespace Sprite_Packer {
                 if( bar != null && foo.SpriteList.Contains( bar ) ) {
                     int index = foo.SpriteList.IndexOf( bar );
                     if( index > 0 ) {
-                        foo.SpriteList.Move( index, index-1 );
+                        foo.SpriteList.Move( index, index - 1 );
                     }
                 }
             }
+
+            UpdatePreview( );
         }
-        private void btnDownSprite_Click( object sender, RoutedEventArgs e ) {
+        private void Command_Execute_SpriteMoveDown( object sender, ExecutedRoutedEventArgs e ) {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
 
             if( foo != null && SpriteSheet.AnimationList.Contains( foo ) ) {
@@ -143,6 +182,35 @@ namespace Sprite_Packer {
                     }
                 }
             }
+
+            UpdatePreview( );
+        }
+
+
+        private void Command_CanExecute_AnimationSelected( object sender, CanExecuteRoutedEventArgs e ) {
+            e.CanExecute = false;
+            if( listAnimView != null ) {
+                e.CanExecute = listAnimView.SelectedItem != null;
+            }
+        }
+        private void Command_CanExecute_SpriteSelected( object sender, CanExecuteRoutedEventArgs e ) {
+            e.CanExecute = false;
+            if( listSpriteView != null ) {
+                e.CanExecute = listSpriteView.SelectedItem != null;
+            }
+        }
+        private void Command_CanExecute_AlwaysTrue( object sender, CanExecuteRoutedEventArgs e ) {
+            e.CanExecute = true;
+        }
+        private void Command_CanExecute_DataExists( object sender, CanExecuteRoutedEventArgs e ) {
+            bool animExits = SpriteSheet.AnimationList.Count > 0; // True if any animations exist.
+
+            bool spriteExists = false;
+            foreach( SpriteAnimation anim in SpriteSheet.AnimationList ) {
+                spriteExists = anim.SpriteList.Count > 0 || spriteExists; // Returns true if there are any sprites in the animation OR spriteExists is already true;
+            }
+
+            e.CanExecute = animExits && spriteExists;
         }
     }
 
@@ -159,6 +227,10 @@ namespace Sprite_Packer {
         }
 
         public WriteableBitmap Image { set; get; }
+
+        // Getters for the WirteableBitmap
+        public int Width { get { return this.Image.PixelWidth; } }
+        public int Height { get { return this.Image.PixelHeight; } }
 
         public SpriteImage( ) {
             Name = "SpriteImage";
