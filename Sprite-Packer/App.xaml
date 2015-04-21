@@ -1,0 +1,11 @@
+﻿<Application x:Class="Sprite_Packer.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:Sprite_Packer"
+             Startup="Application_Startup"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

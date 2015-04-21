@@ -1,0 +1,105 @@
+﻿<Window x:Class="Sprite_Packer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:Sprite_Packer"
+        xmlns:imaging="clr-namespace:System.Windows.Media.Imaging;assembly=WriteableBitmapEx.Wpf"
+        Title="MainWindow"
+        Height="700" Width="1050"
+        Background="Gray">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.New" Executed="Command_Execute_New" CanExecute="Command_CanExecute_New" />
+        <CommandBinding Command="ApplicationCommands.Open" Executed="Command_Execute_Open" CanExecute="Command_CanExecute_Open" />
+        <CommandBinding Command="ApplicationCommands.Save" Executed="Command_Execute_Save" CanExecute="Command_CanExecute_Save" />
+        <CommandBinding Command="ApplicationCommands.SaveAs" Executed="Command_Execute_SaveAs" CanExecute="Command_CanExecute_SaveAs" />
+        <CommandBinding Command="ApplicationCommands.Close" Executed="Command_Execute_Close" CanExecute="Command_CanExecute_Close" />
+    </Window.CommandBindings>
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:SpriteAnimation}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0" Text="{Binding Path=Name}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:SpriteImage}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0" Text="{Binding Path=Name}" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <DockPanel>
+
+        <Menu DockPanel.Dock="Top">
+            <!--File-->
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" Command="New" />
+                <MenuItem Header="_Open" Command="Open" />
+                <MenuItem Header="_Save" Command="Save" />
+                <Separator />
+                <MenuItem Header="_Close" Command="Close" />
+            </MenuItem>
+            
+            <!--Edit-->
+            <MenuItem Header="_Edit">
+                <MenuItem Command="Cut" />
+                <MenuItem Command="Copy" />
+                <MenuItem Command="Paste" />
+                <Separator />
+                <MenuItem Header="_Options" />
+            </MenuItem>
+        </Menu>
+
+        <DockPanel DockPanel.Dock="Left" MinWidth="192">
+            <!--Animation Buttons-->
+            <Grid DockPanel.Dock="Top" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button Name="btnAddAnim" Grid.Column="0" Click="btnAddAnim_Click">Add Animation</Button>
+                <Button Name="btnRemoveAnim" Grid.Column="1" Click="btnRemoveAnim_Click">Remove Animation</Button>
+            </Grid>
+
+            <!--Animation List-->
+            <ListView Name="listAnimView" DockPanel.Dock="Top" MinHeight="128" MaxHeight="192" Margin="5, 0, 5, 5" />
+
+            <!--Sprite Buttons-->
+            <Grid DockPanel.Dock="Top" Margin="5, 0, 5, 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                
+                <Button Name="btnAddSprite" Grid.Column="0" Grid.Row="0" Click="btnAddSprite_Click">Add Sprite</Button>
+                <Button Name="btnRemoveSprite" Grid.Column="1" Grid.Row="0" Click="btnRemoveSprite_Click">Remove Sprite</Button>
+
+                <Button Name="btnUpSprite" Grid.Column="0" Grid.Row="1" Click="btnUpSprite_Click">Move Sprite Up</Button>
+                <Button Name="btnDownSprite" Grid.Column="1" Grid.Row="1" Click="btnDownSprite_Click">Move Sprite Down</Button>
+            </Grid>
+
+            <!--Sprite List-->
+            <ListView Name="listSpriteView" Margin="5, 0, 5, 5" ItemsSource="{Binding ElementName=listAnimView, Path=SelectedItem.SpriteList}">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Click="btnRemoveSprite_Click" />
+                        <!--Right clicking the item selects it, making it work well with the remove button's click function-->
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+
+        </DockPanel>
+
+        <!--Image Preview-->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Canvas Name="canvasImage" Width="1024" Height="1024" Background="White" />
+        </ScrollViewer>
+
+    </DockPanel>
+</Window>
