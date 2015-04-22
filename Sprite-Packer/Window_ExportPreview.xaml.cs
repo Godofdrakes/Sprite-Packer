@@ -14,10 +14,10 @@ using System.Windows.Shapes;
 
 namespace Sprite_Packer {
     /// <summary>
-    /// Interaction logic for Window_AnimEdit.xaml
+    /// Interaction logic for Window_ExportPreview.xaml
     /// </summary>
-    public partial class Window_AnimEdit : Window {
-        public Window_AnimEdit( ) {
+    public partial class Window_ExportPreview : Window {
+        public Window_ExportPreview( ) {
             InitializeComponent( );
         }
     }
