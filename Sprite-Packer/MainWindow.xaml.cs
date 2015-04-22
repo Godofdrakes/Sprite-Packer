@@ -98,7 +98,7 @@ namespace Sprite_Packer {
             SpriteSheet.AnimationList.Add( new SpriteAnimation( ) );
         }
         private void Command_Execute_AnimEdit( object sender, ExecutedRoutedEventArgs e ) {
-
+            
         }
         private void Command_Execute_AnimRemove( object sender, ExecutedRoutedEventArgs e ) {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
