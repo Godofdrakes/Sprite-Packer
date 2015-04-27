@@ -1,0 +1,15 @@
+﻿<Window x:Class="Sprite_Packer.Window_Rename"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Rename" Height="91" Width="330" ResizeMode="NoResize">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">Name:</TextBlock>
+        <TextBox Name="boxRename" Grid.Column="1" Margin="5" Text="{Binding Path=Name}" />
+        <Button Click="Button_Click" Grid.Column="2">Done</Button>
+    </Grid>
+</Window>

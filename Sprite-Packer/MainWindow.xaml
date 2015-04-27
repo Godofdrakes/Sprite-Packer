@@ -3,103 +3,251 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Sprite_Packer"
-        xmlns:imaging="clr-namespace:System.Windows.Media.Imaging;assembly=WriteableBitmapEx.Wpf"
-        Title="MainWindow"
-        Height="700" Width="1050"
-        Background="Gray">
-
-    <Window.CommandBindings>
-        <CommandBinding Command="ApplicationCommands.New" Executed="Command_Execute_New" CanExecute="Command_CanExecute_New" />
-        <CommandBinding Command="ApplicationCommands.Open" Executed="Command_Execute_Open" CanExecute="Command_CanExecute_Open" />
-        <CommandBinding Command="ApplicationCommands.Save" Executed="Command_Execute_Save" CanExecute="Command_CanExecute_Save" />
-        <CommandBinding Command="ApplicationCommands.SaveAs" Executed="Command_Execute_SaveAs" CanExecute="Command_CanExecute_SaveAs" />
-        <CommandBinding Command="ApplicationCommands.Close" Executed="Command_Execute_Close" CanExecute="Command_CanExecute_Close" />
-    </Window.CommandBindings>
+        Title="Pack That Sheet!"
+        Height="500" Width="500"
+        MinHeight="500" MinWidth="500" Background="Gray">
 
     <Window.Resources>
+
+        <RoutedUICommand x:Key="AnimAdd" Text="Add New Animation" />
+        <RoutedUICommand x:Key="AnimRename" Text="Rename Selected Animation" />
+        <RoutedUICommand x:Key="AnimRemove" Text="Remove Selected Animation" />
+
+        <RoutedUICommand x:Key="SpriteAdd" Text="Add New Sprite" />
+        <RoutedUICommand x:Key="SpriteRename" Text="Rename Selected Animation" />
+        <RoutedUICommand x:Key="SpriteRemove" Text="Remove Selected Sprite" />
+        <RoutedUICommand x:Key="SpriteMoveUp" Text="Move Selected Sprite Up" />
+        <RoutedUICommand x:Key="SpriteMoveDown" Text="Move Selected Sprite Down" />
+
         <DataTemplate DataType="{x:Type local:SpriteAnimation}">
-            <StackPanel Orientation="Horizontal">
+            <Grid HorizontalAlignment="Left">
+                <Grid.InputBindings>
+                    <MouseBinding Command="{StaticResource AnimRename}" MouseAction="LeftDoubleClick" />
+                </Grid.InputBindings>
                 <TextBlock Margin="0" Text="{Binding Path=Name}" />
-            </StackPanel>
+            </Grid>
         </DataTemplate>
+
         <DataTemplate DataType="{x:Type local:SpriteImage}">
-            <StackPanel Orientation="Horizontal">
+            <Grid HorizontalAlignment="Left">
+                <Grid.InputBindings>
+                    <MouseBinding Command="{StaticResource SpriteRename}" MouseAction="LeftDoubleClick" />
+                </Grid.InputBindings>
                 <TextBlock Margin="0" Text="{Binding Path=Name}" />
-            </StackPanel>
+            </Grid>
         </DataTemplate>
+        
     </Window.Resources>
+
+    <Window.CommandBindings>
+
+        <CommandBinding Command="ApplicationCommands.New"
+                        Executed="Execute_New"
+                        CanExecute="CanExecute_AlwaysTrue" />
+        <CommandBinding Command="ApplicationCommands.Open"
+                        Executed="Execute_Open"
+                        CanExecute="CanExecute_AlwaysTrue" />
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="Execute_Save"
+                        CanExecute="CanExecute_DataExists" />
+        <CommandBinding Command="ApplicationCommands.Close"
+                        Executed="Execute_Close"
+                        CanExecute="CanExecute_AlwaysTrue" />
+        <CommandBinding Command="ApplicationCommands.Print"
+                        Executed="Exectue_Preview"
+                        CanExecute="CanExecute_DataExists"/>
+
+        <CommandBinding Command="{StaticResource AnimAdd}"
+                        Executed="Execute_AnimAdd"
+                        CanExecute="CanExecute_AlwaysTrue" />
+        <CommandBinding Command="{StaticResource AnimRename}"
+                        Executed="Execute_AnimRename"
+                        CanExecute="CanExecute_AnimationSelected" />
+        <CommandBinding Command="{StaticResource AnimRemove}"
+                        Executed="Execute_AnimRemove"
+                        CanExecute="CanExecute_AnimationSelected" />
+
+        <CommandBinding Command="{StaticResource SpriteAdd}"
+                        Executed="Execute_SpriteAdd"
+                        CanExecute="CanExecute_AlwaysTrue" />
+        <CommandBinding Command="{StaticResource SpriteRename}"
+                        Executed="Execute_SpriteRename"
+                        CanExecute="CanExecute_SpriteSelected" />
+        <CommandBinding Command="{StaticResource SpriteRemove}"
+                        Executed="Execute_SpriteRemove"
+                        CanExecute="CanExecute_SpriteSelected" />
+        <CommandBinding Command="{StaticResource SpriteMoveUp}"
+                        Executed="Execute_SpriteMoveUp"
+                        CanExecute="CanExecute_SpriteSelected" />
+        <CommandBinding Command="{StaticResource SpriteMoveDown}"
+                        Executed="Execute_SpriteMoveDown"
+                        CanExecute="CanExecute_SpriteSelected" />
+
+    </Window.CommandBindings>
     
+    <Window.InputBindings>
+        <KeyBinding Key="F4" Modifiers="Alt" Command="Close" />
+    </Window.InputBindings>
+
     <DockPanel>
 
+        <!--Menu bar-->
         <Menu DockPanel.Dock="Top">
             <!--File-->
             <MenuItem Header="_File">
-                <MenuItem Header="_New" Command="New" />
-                <MenuItem Header="_Open" Command="Open" />
-                <MenuItem Header="_Save" Command="Save" />
+                <MenuItem Header="_New"
+                          Command="New" />
+                <MenuItem Header="_Open"
+                          Command="Open" />
+                <MenuItem Header="_Export"
+                          Command="Save" />
+                <MenuItem Header="_Preview"
+                          Command="Print" />
                 <Separator />
-                <MenuItem Header="_Close" Command="Close" />
+                <MenuItem Header="E_xit"
+                          Command="Close"
+                          InputGestureText="Alt+F4"/>
             </MenuItem>
-            
+
             <!--Edit-->
             <MenuItem Header="_Edit">
-                <MenuItem Command="Cut" />
-                <MenuItem Command="Copy" />
-                <MenuItem Command="Paste" />
-                <Separator />
-                <MenuItem Header="_Options" />
+                <MenuItem Header="Add New _Animation to Sprite Sheet"
+                          Command="{StaticResource AnimAdd}"
+                          InputGestureText="Alt + A" />
+                <MenuItem Header="Add New _Sprite to Animation"
+                          Command="{StaticResource SpriteAdd}"
+                          InputGestureText="Alt + S" />
             </MenuItem>
         </Menu>
 
-        <DockPanel DockPanel.Dock="Left" MinWidth="192">
-            <!--Animation Buttons-->
-            <Grid DockPanel.Dock="Top" Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+        <!--Main window area-->
+        <Grid Margin="5">
 
-                <Button Name="btnAddAnim" Grid.Column="0" Click="btnAddAnim_Click">Add Animation</Button>
-                <Button Name="btnRemoveAnim" Grid.Column="1" Click="btnRemoveAnim_Click">Remove Animation</Button>
-            </Grid>
+            <Grid.InputBindings>
+                <KeyBinding Command="{StaticResource AnimAdd}" Key="A" Modifiers="Alt" />
+                <KeyBinding Command="{StaticResource SpriteAdd}" Key="S" Modifiers="Alt" />
+            </Grid.InputBindings>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
 
-            <!--Animation List-->
-            <ListView Name="listAnimView" DockPanel.Dock="Top" MinHeight="128" MaxHeight="192" Margin="5, 0, 5, 5" />
-
-            <!--Sprite Buttons-->
-            <Grid DockPanel.Dock="Top" Margin="5, 0, 5, 5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+            <!--Side Bar-->
+            <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="2*" />
                 </Grid.RowDefinitions>
-                
-                <Button Name="btnAddSprite" Grid.Column="0" Grid.Row="0" Click="btnAddSprite_Click">Add Sprite</Button>
-                <Button Name="btnRemoveSprite" Grid.Column="1" Grid.Row="0" Click="btnRemoveSprite_Click">Remove Sprite</Button>
 
-                <Button Name="btnUpSprite" Grid.Column="0" Grid.Row="1" Click="btnUpSprite_Click">Move Sprite Up</Button>
-                <Button Name="btnDownSprite" Grid.Column="1" Grid.Row="1" Click="btnDownSprite_Click">Move Sprite Down</Button>
+                <!--Animation View-->
+                <DockPanel Grid.Row="0">
+
+                    <!--Header-->
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Separator Grid.Column="0" />
+                        <TextBlock Grid.Column="1" FontSize="10">Animations</TextBlock>
+                        <Separator Grid.Column="2" />
+                    </Grid>
+
+                    <!--Add/Remove-->
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Name="btnAnimAdd" Grid.Column="0" Command="{StaticResource AnimAdd}">Add</Button>
+                        <Button Name="btnAnimEdit" Grid.Column="1" Command="{StaticResource AnimRename}">Rename</Button>
+                        <Button Name="btnAnimRemove" Grid.Column="2" Command="{StaticResource AnimRemove}">Remove</Button>
+                    </Grid>
+
+                    <!--Animation List-->
+                    <ListView Name="listAnimView"
+                              SelectionChanged="ListViewSelectionChange">
+
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="_Add" Command="{StaticResource AnimAdd}" />
+                                <MenuItem Header="_Rename" Command="{StaticResource AnimRename}" />
+                                <MenuItem Header="_Delete" Command="{StaticResource AnimRemove}" />
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+
+                    </ListView>
+
+                </DockPanel>
+
+                <!--Sprite View-->
+                <DockPanel Grid.Row="1">
+
+                    <!--Header-->
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Separator Grid.Column="0" />
+                        <TextBlock Grid.Column="1" FontSize="10">Sprites</TextBlock>
+                        <Separator Grid.Column="2" />
+                    </Grid>
+
+                    <!--Add/Remove-->
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Name="btnSpriteAdd" Grid.Column="0" Grid.Row="1" Command="{StaticResource SpriteAdd}">Add</Button>
+                        <Button Name="btnSpriteEdit" Grid.Column="1" Grid.Row="1" Command="{StaticResource SpriteRename}">Rename</Button>
+                        <Button Name="btnSpriteRemove" Grid.Column="2" Grid.Row="1" Command="{StaticResource SpriteRemove}">Remove</Button>
+                    </Grid>
+                    
+                    <!--Up/Down-->
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Name="btnSpriteUp" Grid.Column="0" Grid.Row="1" Command="{StaticResource SpriteMoveUp}">Move Up</Button>
+                        <Button Name="btnSpriteDown" Grid.Column="1" Grid.Row="1" Command="{StaticResource SpriteMoveDown}">Move Down</Button>
+                    </Grid>
+
+                    <!--Sprite List-->
+                    <ListView Name="listSpriteView">
+
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="_Add" Command="{StaticResource SpriteAdd}" />
+                                <MenuItem Header="_Rename" Command="{StaticResource SpriteRename}" />
+                                <MenuItem Header="_Delete" Command="{StaticResource SpriteRemove}" />
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+
+                    </ListView>
+                </DockPanel>
+
             </Grid>
 
-            <!--Sprite List-->
-            <ListView Name="listSpriteView" Margin="5, 0, 5, 5" ItemsSource="{Binding ElementName=listAnimView, Path=SelectedItem.SpriteList}">
-                <ListView.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Delete" Click="btnRemoveSprite_Click" />
-                        <!--Right clicking the item selects it, making it work well with the remove button's click function-->
-                    </ContextMenu>
-                </ListView.ContextMenu>
-            </ListView>
+            <!--Image View-->
+            <ScrollViewer Grid.Column="1" Margin="5, 0, 0, 0"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto">
+                <Canvas Name="canvasImage" Background="White" />
+            </ScrollViewer>
 
-        </DockPanel>
-
-        <!--Image Preview-->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-            <Canvas Name="canvasImage" Width="1024" Height="1024" Background="White" />
-        </ScrollViewer>
-
+        </Grid>
     </DockPanel>
 </Window>
