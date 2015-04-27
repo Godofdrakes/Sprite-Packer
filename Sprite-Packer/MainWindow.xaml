@@ -44,12 +44,18 @@
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="Execute_New"
                         CanExecute="CanExecute_AlwaysTrue" />
+        <CommandBinding Command="ApplicationCommands.Open"
+                        Executed="Execute_Open"
+                        CanExecute="CanExecute_AlwaysTrue" />
         <CommandBinding Command="ApplicationCommands.Save"
                         Executed="Execute_Save"
                         CanExecute="CanExecute_DataExists" />
         <CommandBinding Command="ApplicationCommands.Close"
                         Executed="Execute_Close"
                         CanExecute="CanExecute_AlwaysTrue" />
+        <CommandBinding Command="ApplicationCommands.Print"
+                        Executed="Exectue_Preview"
+                        CanExecute="CanExecute_DataExists"/>
 
         <CommandBinding Command="{StaticResource AnimAdd}"
                         Executed="Execute_AnimAdd"
@@ -78,6 +84,10 @@
                         CanExecute="CanExecute_SpriteSelected" />
 
     </Window.CommandBindings>
+    
+    <Window.InputBindings>
+        <KeyBinding Key="F4" Modifiers="Alt" Command="Close" />
+    </Window.InputBindings>
 
     <DockPanel>
 
@@ -85,13 +95,18 @@
         <Menu DockPanel.Dock="Top">
             <!--File-->
             <MenuItem Header="_File">
-                <MenuItem Header="_New Sprite Sheet"
+                <MenuItem Header="_New"
                           Command="New" />
-                <MenuItem Header="Export _Sprite Sheet"
+                <MenuItem Header="_Open"
+                          Command="Open" />
+                <MenuItem Header="_Export"
                           Command="Save" />
+                <MenuItem Header="_Preview"
+                          Command="Print" />
                 <Separator />
-                <MenuItem Header="_Exit Program"
-                          Command="Close" />
+                <MenuItem Header="E_xit"
+                          Command="Close"
+                          InputGestureText="Alt+F4"/>
             </MenuItem>
 
             <!--Edit-->
@@ -160,8 +175,9 @@
 
                         <ListView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Add Animation" Command="{StaticResource AnimAdd}" />
-                                <MenuItem Header="Remove Animation" Command="{StaticResource AnimRemove}" />
+                                <MenuItem Header="_Add" Command="{StaticResource AnimAdd}" />
+                                <MenuItem Header="_Rename" Command="{StaticResource AnimRename}" />
+                                <MenuItem Header="_Delete" Command="{StaticResource AnimRemove}" />
                             </ContextMenu>
                         </ListView.ContextMenu>
 
@@ -210,15 +226,13 @@
                     </Grid>
 
                     <!--Sprite List-->
-                    <ListView Name="listSpriteView"
-                              ItemsSource="{Binding ElementName=listAnimView,Path=SelectedItem.SpriteList}"
-                              SelectionChanged="ListViewSelectionChange">
+                    <ListView Name="listSpriteView">
 
                         <ListView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Add Sprite" Command="{StaticResource SpriteAdd}" />
-                                <MenuItem Header="Rename Sprite" Command="{StaticResource SpriteRename}" />
-                                <MenuItem Header="Remove Sprite" Command="{StaticResource SpriteRemove}" />
+                                <MenuItem Header="_Add" Command="{StaticResource SpriteAdd}" />
+                                <MenuItem Header="_Rename" Command="{StaticResource SpriteRename}" />
+                                <MenuItem Header="_Delete" Command="{StaticResource SpriteRemove}" />
                             </ContextMenu>
                         </ListView.ContextMenu>
 
@@ -228,10 +242,9 @@
             </Grid>
 
             <!--Image View-->
-            <ScrollViewer
-                Grid.Column="1" Margin="5, 0, 0, 0"
-                VerticalScrollBarVisibility="Auto"
-                HorizontalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Column="1" Margin="5, 0, 0, 0"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto">
                 <Canvas Name="canvasImage" Background="White" />
             </ScrollViewer>
 

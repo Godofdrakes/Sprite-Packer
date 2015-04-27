@@ -1,13 +1,23 @@
 ﻿<Window x:Class="Sprite_Packer.Window_ExportPreview"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Export Preview" Height="300" Width="300"
+        Title="Export Preview"
+        Height="300" Width="300"
+        MinWidth="300" MinHeight="300"
         Background="Gray">
-    <DockPanel>
-        <Menu DockPanel.Dock="Top" MaxHeight="22">
-            <MenuItem Header="_Save" VerticalAlignment="Center" />
-            <MenuItem Header="_Cancel" VerticalAlignment="Center" />
-        </Menu>
-        <Image Name="imagePreview" />
-    </DockPanel>
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Close"
+                        Executed="Execute_Close"
+                        CanExecute="CanExecute_Always"/>
+    </Window.CommandBindings>
+    
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="Close"/>
+    </Window.InputBindings>
+    
+    <Grid>
+        <Image VerticalAlignment="Center" HorizontalAlignment="Center" Name="imagePreview" />
+        <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Right">Esc to close</TextBlock>
+    </Grid>
 </Window>

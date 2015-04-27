@@ -20,5 +20,13 @@ namespace Sprite_Packer {
         public Window_ExportPreview( ) {
             InitializeComponent( );
         }
+
+        private void Execute_Close( object sender, ExecutedRoutedEventArgs e ) {
+            this.Close( );
+        }
+
+        private void CanExecute_Always( object sender, CanExecuteRoutedEventArgs e ) {
+            e.CanExecute = true;
+        }
     }
 }
