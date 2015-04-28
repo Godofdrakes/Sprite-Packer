@@ -9,6 +9,9 @@
 
     <Window.Resources>
 
+        <sys:String x:Key="strDataLossWarning1">Are you sure you are done with this sprite sheet?</sys:String>
+        <sys:String x:Key="strDataLossWarning2">All unsaved data will be lost!</sys:String>
+
         <RoutedUICommand x:Key="AnimAdd" Text="Add New Animation" />
         <RoutedUICommand x:Key="AnimRename" Text="Rename Selected Animation" />
         <RoutedUICommand x:Key="AnimRemove" Text="Remove Selected Animation" />

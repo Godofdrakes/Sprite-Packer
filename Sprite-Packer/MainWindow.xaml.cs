@@ -18,7 +18,6 @@ using System.Collections.ObjectModel; // ObservableCollection
 using System.ComponentModel; // INotifyPropertyChanged
 using Microsoft.Win32; // Windows API
 using System.Xml.Linq; // Linq to xml
-using System.Diagnostics; // Process.Start()
 
 namespace Sprite_Packer {
     /// <summary>
@@ -79,11 +78,8 @@ namespace Sprite_Packer {
 
         private void Execute_New( object sender, ExecutedRoutedEventArgs e ) {
 
-            string title = "New";
-            string confirm = "Confirm new? All unsaved data will be lost?";
-
-            if( MessageBox.Show( confirm, title, MessageBoxButton.OKCancel, MessageBoxImage.Question ) == MessageBoxResult.OK ) {
-                spriteSheet = new SpriteSheet( );
+            if( MessageBox.Show( (string)FindResource( "strDataLossWarning1" ) + "\n" + (string)FindResource( "strDataLossWarning2" ), "Confirm?", MessageBoxButton.OKCancel, MessageBoxImage.Question ) == MessageBoxResult.OK ) {
+                spriteSheet = new SpriteSheet( ) { Padding = 5 };
                 canvasImage.Children.Clear( );
                 listAnimView.ItemsSource = spriteSheet.AnimationList;
                 listSpriteView.ItemsSource = null;
@@ -95,60 +91,62 @@ namespace Sprite_Packer {
             OpenFileDialog openFile = new OpenFileDialog( );
             openFile.Filter = "XML File (*.xml)|*.xml";
 
-            if( openFile.ShowDialog( ) == true ) {
-                SpriteSheet newSheet = null;
-                FileStream stream = null;
-                XDocument xmlDoc = null;
+            if( MessageBox.Show( (string)FindResource( "strDataLossWarning1" ) + "\n" + (string)FindResource( "strDataLossWarning2" ), "Confirm?", MessageBoxButton.OKCancel, MessageBoxImage.Question ) == MessageBoxResult.OK ) {
+                if( openFile.ShowDialog( ) == true ) {
+                    SpriteSheet newSheet = null;
+                    FileStream stream = null;
+                    XDocument xmlDoc = null;
 
-                try {
-                    stream = File.OpenRead( openFile.FileName );
-                    xmlDoc = XDocument.Load( stream );
-                    stream.Close( );
-                    stream = null;
-                    newSheet = new SpriteSheet() {
-                        Padding = Convert.ToInt32( xmlDoc.Root.Attribute("Padding").Value ),
-                    };
-
-                    foreach( XElement animElement in xmlDoc.Root.Elements("Animation") ) {
-                        SpriteAnimation newAnim = new SpriteAnimation( ) {
-                            Name = animElement.Attribute( "Name" ).Value,
-                        };
-
-                        stream = File.OpenRead( System.IO.Path.GetDirectoryName( openFile.FileName ) + "\\" + animElement.Attribute("FileName").Value );
-                        WriteableBitmap animImage = BitmapFactory.New( 1, 1 ).FromStream( stream );
-
-                        foreach( XElement spriteElement in animElement.Elements( "Image" ) ) {
-                            int width = Convert.ToInt32( spriteElement.Element( "Size" ).Attribute( "Width" ).Value );
-                            int height = Convert.ToInt32( spriteElement.Element( "Size" ).Attribute( "Height" ).Value );
-                            int x = Convert.ToInt32( spriteElement.Element( "Position" ).Attribute( "X" ).Value );
-                            int y = Convert.ToInt32( spriteElement.Element( "Position" ).Attribute( "Y" ).Value );
-                            WriteableBitmap spriteImage = BitmapFactory.New( width, height );
-                            spriteImage.Blit( new Rect( 0, 0, width, height ), animImage, new Rect( x, y, width, height ) );
-
-                            SpriteImage newImage = new SpriteImage( ) {
-                                Name = spriteElement.Attribute("Name").Value,
-                                Image = spriteImage,
-                            };
-
-                            newAnim.SpriteList.Add( newImage );
-                        }
-
-                        newSheet.AnimationList.Add( newAnim );
-                    }
-                    spriteSheet = newSheet;
-                    UpdatePreview( );
-
-                    listAnimView.ItemsSource = spriteSheet.AnimationList;
-                    listAnimView.SelectedIndex = spriteSheet.AnimationList.Count - 1;
-                    listAnimView.Focus( );
-                }
-                catch( Exception except ) {
-                    MessageBox.Show( except.Message );
-                }
-                finally {
-                    if( stream != null ) {
+                    try {
+                        stream = File.OpenRead( openFile.FileName );
+                        xmlDoc = XDocument.Load( stream );
                         stream.Close( );
                         stream = null;
+                        newSheet = new SpriteSheet( ) {
+                            Padding = Convert.ToInt32( xmlDoc.Root.Attribute( "Padding" ).Value ),
+                        };
+
+                        foreach( XElement animElement in xmlDoc.Root.Elements( "Animation" ) ) {
+                            SpriteAnimation newAnim = new SpriteAnimation( ) {
+                                Name = animElement.Attribute( "Name" ).Value,
+                            };
+
+                            stream = File.OpenRead( System.IO.Path.GetDirectoryName( openFile.FileName ) + "\\" + animElement.Attribute( "FileName" ).Value );
+                            WriteableBitmap animImage = BitmapFactory.New( 1, 1 ).FromStream( stream );
+
+                            foreach( XElement spriteElement in animElement.Elements( "Image" ) ) {
+                                int width = Convert.ToInt32( spriteElement.Element( "Size" ).Attribute( "Width" ).Value );
+                                int height = Convert.ToInt32( spriteElement.Element( "Size" ).Attribute( "Height" ).Value );
+                                int x = Convert.ToInt32( spriteElement.Element( "Position" ).Attribute( "X" ).Value );
+                                int y = Convert.ToInt32( spriteElement.Element( "Position" ).Attribute( "Y" ).Value );
+                                WriteableBitmap spriteImage = BitmapFactory.New( width, height );
+                                spriteImage.Blit( new Rect( 0, 0, width, height ), animImage, new Rect( x, y, width, height ) );
+
+                                SpriteImage newImage = new SpriteImage( ) {
+                                    Name = spriteElement.Attribute( "Name" ).Value,
+                                    Image = spriteImage,
+                                };
+
+                                newAnim.SpriteList.Add( newImage );
+                            }
+
+                            newSheet.AnimationList.Add( newAnim );
+                        }
+                        spriteSheet = newSheet;
+                        UpdatePreview( );
+
+                        listAnimView.ItemsSource = spriteSheet.AnimationList;
+                        listAnimView.SelectedIndex = spriteSheet.AnimationList.Count - 1;
+                        listAnimView.Focus( );
+                    }
+                    catch( Exception except ) {
+                        MessageBox.Show( except.Message );
+                    }
+                    finally {
+                        if( stream != null ) {
+                            stream.Close( );
+                            stream = null;
+                        }
                     }
                 }
             }
@@ -223,7 +221,7 @@ namespace Sprite_Packer {
             }
         }
         private void Execute_Close( object sender, ExecutedRoutedEventArgs e ) {
-            if( MessageBox.Show( "Are you sure you want to quit?\nUnsaved data will be lost.", "Exit?", MessageBoxButton.YesNo ) == MessageBoxResult.Yes ) {
+            if( MessageBox.Show( (string)FindResource( "strDataLossWarning1" ) + "\n" + (string)FindResource( "strDataLossWarning2" ), "Confirm?", MessageBoxButton.OKCancel, MessageBoxImage.Question ) == MessageBoxResult.OK ) {
                 this.Close( );
             }
         }
