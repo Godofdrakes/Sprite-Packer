@@ -9,8 +9,9 @@ using System.Linq;
 using System.Xml.Linq;
 
 namespace UnitTestProject1 {
-    [TestClass]
-    public class UnitTest1 {
+
+    [TestClass( )]
+    public class SpriteImage_Testing {
         [TestCategory( "SpriteImage" ), TestCategory( "Constructor" ), TestMethod( )]
         public void SpriteImage_Construct( ) {
             SpriteImage image = new SpriteImage( ) { Name = "TEST", Image = BitmapFactory.New( 32, 64 ) };
@@ -33,7 +34,10 @@ namespace UnitTestProject1 {
             Assert.AreEqual( expected.Element( "Size" ).Attribute( "Width" ).Value, actual.Element( "Size" ).Attribute( "Width" ).Value, "Width check failed" );
             Assert.AreEqual( expected.Element( "Size" ).Attribute( "Height" ).Value, actual.Element( "Size" ).Attribute( "Height" ).Value, "Height check failed" );
         }
+    }
 
+    [TestClass( )]
+    public class SpriteAnimation_Testing {
         [TestCategory( "SpriteAnimation" ), TestCategory( "Constructor" ), TestMethod( )]
         public void SpriteAnimation_Construct( ) {
             SpriteAnimation anim = new SpriteAnimation( ) { Name = "TEST" };
@@ -54,7 +58,10 @@ namespace UnitTestProject1 {
             Assert.AreEqual( expected.Attribute( "Name" ).Value, actual.Attribute( "Name" ).Value, "Name check failed" );
             Assert.AreEqual( expected.Attribute( "Count" ).Value, actual.Attribute( "Count" ).Value, "Count check failed" );
         }
+    }
 
+    [TestClass( )]
+    public class SpriteSheet_Testing {
         [TestCategory( "SpriteSheet" ), TestCategory( "Constructor" ), TestMethod( )]
         public void SpriteSheet_Construct( ) {
             SpriteSheet sheet = new SpriteSheet( ) { Padding = 5 };
