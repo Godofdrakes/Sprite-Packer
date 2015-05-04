@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:Sprite_Packer"
         Title="Pack That Sheet!"
         Height="500" Width="500"
-        MinHeight="500" MinWidth="500" Background="Gray">
+        MinHeight="500" MinWidth="500" Background="SlateGray">
 
     <Window.Resources>
 
@@ -53,12 +53,7 @@
         <CommandBinding Command="ApplicationCommands.Save"
                         Executed="Execute_Save"
                         CanExecute="CanExecute_DataExists" />
-        <CommandBinding Command="ApplicationCommands.Close"
-                        Executed="Execute_Close"
-                        CanExecute="CanExecute_AlwaysTrue" />
-        <CommandBinding Command="ApplicationCommands.Print"
-                        Executed="Exectue_Preview"
-                        CanExecute="CanExecute_DataExists"/>
+        <CommandBinding Command="ApplicationCommands.Close" Executed="Execute_Close" CanExecute="CanExecute_AlwaysTrue" />
 
         <CommandBinding Command="{StaticResource AnimAdd}"
                         Executed="Execute_AnimAdd"
@@ -155,7 +150,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Separator Grid.Column="0" />
-                        <TextBlock Grid.Column="1" FontSize="10">Animations</TextBlock>
+                        <TextBlock Grid.Column="1" FontSize="11">Animations</TextBlock>
                         <Separator Grid.Column="2" />
                     </Grid>
 
@@ -200,7 +195,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Separator Grid.Column="0" />
-                        <TextBlock Grid.Column="1" FontSize="10">Sprites</TextBlock>
+                        <TextBlock Grid.Column="1" FontSize="11">Sprites</TextBlock>
                         <Separator Grid.Column="2" />
                     </Grid>
 

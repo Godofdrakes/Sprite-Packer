@@ -226,13 +226,6 @@ namespace Sprite_Packer {
             }
         }
 
-        private void Exectue_Preview( object sender, ExecutedRoutedEventArgs e ) {
-            Window_ExportPreview preview = new Window_ExportPreview( );
-            SpriteAnimation anim = listAnimView.SelectedItem as SpriteAnimation;
-            preview.imagePreview.Source = anim.BitmapExport( spriteSheet.Padding );
-            preview.ShowDialog( );
-        }
-
 
         private void Execute_AnimAdd( object sender, ExecutedRoutedEventArgs e ) {
             spriteSheet.AnimationList.Add( new SpriteAnimation( ) );
@@ -442,6 +435,9 @@ namespace Sprite_Packer {
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged( string propertyName ) {
+#if _VERBOSE
+                    Console.WriteLine( "SpriteSheet.PropertyChanged : " + propertyName );
+#endif
             if( PropertyChanged != null ) { PropertyChanged( this, new PropertyChangedEventArgs( propertyName ) ); }
         }
     }
@@ -512,6 +508,9 @@ namespace Sprite_Packer {
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged( string propertyName ) {
+#if _VERBOSE
+                    Console.WriteLine( "SpriteImage.PropertyChanged : " + propertyName );
+#endif
             if( PropertyChanged != null ) { PropertyChanged( this, new PropertyChangedEventArgs( propertyName ) ); }
         }
 

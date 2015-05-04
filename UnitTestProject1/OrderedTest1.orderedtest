@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="orderedtest1" storage="c:\users\urias.rooney\documents\git projects\sprite-packer\unittestproject1\orderedtest1.orderedtest" id="0bd54ded-aa23-43b7-8bfd-862cd8666f5c" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestLinks>
+    <TestLink id="c206561e-7887-9374-5260-1c2627ad8228" name="SpriteImage_Construct" storage="bin\debug\unittestproject1.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="551d1a10-4ff9-7efb-ad8c-8f9f691a848b" name="SpriteImage_XML" storage="bin\debug\unittestproject1.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="ed7b483a-f593-764c-1ea5-38165b545418" name="SpriteAnimation_Construct" storage="bin\debug\unittestproject1.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="efd257d7-df64-38aa-3f10-2b43fc829600" name="SpriteAnimation_XML" storage="bin\release\unittestproject1.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="f3ca528a-3dbe-068b-e1e3-0b55d8d688b3" name="SpriteSheet_Construct" storage="bin\debug\unittestproject1.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>
