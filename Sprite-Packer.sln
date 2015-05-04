@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sprite-Packer", "Sprite-Packer\Sprite-Packer.csproj", "{F5CC958E-D2E7-4F7A-91A1-101A65392FE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{ADFD69C2-5503-4295-AFCB-6B35D413EC73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F5CC958E-D2E7-4F7A-91A1-101A65392FE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5CC958E-D2E7-4F7A-91A1-101A65392FE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5CC958E-D2E7-4F7A-91A1-101A65392FE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADFD69C2-5503-4295-AFCB-6B35D413EC73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADFD69C2-5503-4295-AFCB-6B35D413EC73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADFD69C2-5503-4295-AFCB-6B35D413EC73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADFD69C2-5503-4295-AFCB-6B35D413EC73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
