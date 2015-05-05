@@ -5,6 +5,7 @@
         xmlns:local="clr-namespace:Sprite_Packer"
         Title="Pack That Sheet!"
         Height="500" Width="500"
+        WindowStartupLocation="CenterScreen"
         MinHeight="500" MinWidth="500" Background="SlateGray">
 
     <Window.Resources>
@@ -23,12 +24,12 @@
         <RoutedUICommand x:Key="SpriteMoveDown" Text="Move Selected Sprite Down" />
 
         <DataTemplate DataType="{x:Type local:SpriteAnimation}">
-            <Grid HorizontalAlignment="Left">
-                <Grid.InputBindings>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                <StackPanel.InputBindings>
                     <MouseBinding Command="{StaticResource AnimRename}" MouseAction="LeftDoubleClick" />
-                </Grid.InputBindings>
+                </StackPanel.InputBindings>
                 <TextBlock Margin="0" Text="{Binding Path=Name}" />
-            </Grid>
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type local:SpriteImage}">
@@ -36,7 +37,16 @@
                 <Grid.InputBindings>
                     <MouseBinding Command="{StaticResource SpriteRename}" MouseAction="LeftDoubleClick" />
                 </Grid.InputBindings>
-                <TextBlock Margin="0" Text="{Binding Path=Name}" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Margin="0" Text="{Binding Path=Name}" Grid.Column="0" />
+                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                    <TextBlock Margin="5, 0, 0, 0" Text="{Binding Path=Width}" />
+                    <TextBlock Margin="0" Text="x" />
+                    <TextBlock Margin="0" Text="{Binding Path=Height}" />
+                </StackPanel>
             </Grid>
         </DataTemplate>
         
@@ -117,6 +127,18 @@
                           InputGestureText="Alt + S" />
             </MenuItem>
         </Menu>
+
+        <!--Status bar-->
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Canvas Size:" Margin="0, 0, 5, 0" />
+                    <TextBlock Text="{Binding ElementName=canvasImage, Path=Width}" Name="textCanvasWidth" />
+                    <TextBlock Text="x" />
+                    <TextBlock Text="{Binding ElementName=canvasImage, Path=Height}" Name="textCanvasHieght" />
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
 
         <!--Main window area-->
         <Grid Margin="5">
@@ -240,9 +262,7 @@
             </Grid>
 
             <!--Image View-->
-            <ScrollViewer Grid.Column="1" Margin="5, 0, 0, 0"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Column="1" Margin="5, 0, 0, 0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <Canvas Name="canvasImage" Background="White" />
             </ScrollViewer>
 
