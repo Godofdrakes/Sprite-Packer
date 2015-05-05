@@ -26,7 +26,6 @@ namespace Sprite_Packer {
     public partial class MainWindow : Window {
         public SpriteSheet spriteSheet { set; get; }
 
-
         public MainWindow( ) {
             spriteSheet = new SpriteSheet( ) { Padding = 5 };
             spriteSheet.AnimationList.Add( new SpriteAnimation( ) );
@@ -39,11 +38,10 @@ namespace Sprite_Packer {
             listAnimView.Focus( );
         }
 
-
         public void UpdatePreview( object sender = null, RoutedEventArgs e = null ) {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
 
-            if( foo != null && spriteSheet.AnimationList.Contains( foo ) ) {
+            if( foo != null ) {
 
                 canvasImage.Children.Clear( );
 
@@ -67,14 +65,14 @@ namespace Sprite_Packer {
 
                 canvasImage.Width = x_size;
                 canvasImage.Height = y_size;
+
+                listSpriteView.ItemsSource = foo.SpriteList;
             }
         }
-
 
         private void ListViewSelectionChange( object sender, SelectionChangedEventArgs e ) {
             UpdatePreview( );
         }
-
 
         private void Execute_New( object sender, ExecutedRoutedEventArgs e ) {
 
@@ -226,7 +224,6 @@ namespace Sprite_Packer {
             }
         }
 
-
         private void Execute_AnimAdd( object sender, ExecutedRoutedEventArgs e ) {
             spriteSheet.AnimationList.Add( new SpriteAnimation( ) );
             listAnimView.SelectedIndex = spriteSheet.AnimationList.Count( ) - 1;
@@ -257,7 +254,6 @@ namespace Sprite_Packer {
             listAnimView.SelectedIndex = index;
             listAnimView.Focus( );
         }
-
 
         private void Execute_SpriteAdd( object sender, ExecutedRoutedEventArgs e ) {
             OpenFileDialog openFile = new OpenFileDialog( );
@@ -372,7 +368,6 @@ namespace Sprite_Packer {
             listSpriteView.Focus( );
         }
 
-
         private void CanExecute_AnimationSelected( object sender, CanExecuteRoutedEventArgs e ) {
             e.CanExecute = false;
             if( listAnimView != null ) {
@@ -413,14 +408,24 @@ namespace Sprite_Packer {
             }
         }
 
-        public WriteableBitmap Image { set; get; }
+        public WriteableBitmap Image;
 
         // Getters for the WirteableBitmap
-        public int Width { get { return this.Image.PixelWidth; } }
-        public int Height { get { return this.Image.PixelHeight; } }
+        public int Width {
+            get {
+                if( this.Image != null ) { return this.Image.PixelWidth; }
+                return -1;
+            }
+        }
+        public int Height {
+            get {
+                if( this.Image != null ) {  return this.Image.PixelHeight; }
+                return -1;
+            }
+        }
 
         public SpriteImage( ) {
-            Name = "SpriteImage";
+            Name = this.GetType().ToString();
             Image = null;
         }
 
@@ -454,7 +459,20 @@ namespace Sprite_Packer {
             }
         }
 
-        public ObservableCollection<SpriteImage> SpriteList { set; get; }
+        public Size GetSize( int padding ) {
+            Size returnSize = new Size( padding, padding );
+
+            foreach( SpriteImage sprite in SpriteList ) {
+                returnSize.Width += (double)sprite.Width + padding;
+                if( returnSize.Height < padding + sprite.Height + padding ) {
+                    returnSize.Height = padding + sprite.Height + padding;
+                }
+            }
+
+            return returnSize;
+        }
+
+        public ObservableCollection<SpriteImage> SpriteList;
 
         public SpriteAnimation( ) {
             SpriteList = new ObservableCollection<SpriteImage>( );
@@ -462,19 +480,7 @@ namespace Sprite_Packer {
         }
 
         public WriteableBitmap BitmapExport( int padding ) {
-            WriteableBitmap export = null;
-
-            int width = padding;
-            int height = padding * 2;
-
-            foreach( SpriteImage source in SpriteList ) {
-                width += source.Width + padding;
-                if( height < source.Height + ( padding * 2 ) ) {
-                    height = source.Height + ( padding * 2 );
-                }
-            }
-
-            export = BitmapFactory.New( width, height );
+            WriteableBitmap export = BitmapFactory.New( (int)GetSize( padding ).Width, (int)GetSize( padding ).Height );
 
             int xpos = padding;
 
@@ -490,18 +496,21 @@ namespace Sprite_Packer {
             XElement anim = new XElement( "Animation", new XAttribute( "Name", Name ) );
 
             int pos_x = padding;
-            int pos_y = padding;
+            XElement animSprites = new XElement( "Sprites" );
 
             // For loops to get each image's xml
             foreach( SpriteImage sprite in SpriteList ) {
-                XElement foo = sprite.ToXElement( );
-                XElement pos = new XElement( "Position", new XAttribute( "X", pos_x ), new XAttribute( "Y", pos_y ) );
+                XElement xSprite = sprite.ToXElement( );
+                XElement pos = new XElement( "Position", new XAttribute( "X", pos_x ), new XAttribute( "Y", padding ) );
                 pos_x += sprite.Width + padding;
-                foo.Add( pos );
-                anim.Add( foo );
+                xSprite.Add( pos );
+                animSprites.Add( xSprite );
             }
 
-            anim.Add( new XAttribute( "Count", SpriteList.Count ) );
+            animSprites.Add( new XAttribute( "Count", SpriteList.Count ) );
+            XElement size = new XElement( "Size" );
+            size.Add( new XAttribute( "Width", GetSize( padding ).Width ), new XAttribute( "Height", GetSize( padding ).Height ) );
+            anim.Add( size, animSprites );
 
             return anim;
         }
