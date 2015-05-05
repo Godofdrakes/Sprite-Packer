@@ -39,10 +39,12 @@
                 </Grid.InputBindings>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Margin="0" Text="{Binding Path=Name}" Grid.Column="0" />
-                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                <GridSplitter Grid.Column="1" />
+                <StackPanel Orientation="Horizontal" Grid.Column="2">
                     <TextBlock Margin="5, 0, 0, 0" Text="{Binding Path=Width}" />
                     <TextBlock Margin="0" Text="x" />
                     <TextBlock Margin="0" Text="{Binding Path=Height}" />
@@ -268,4 +270,5 @@
 
         </Grid>
     </DockPanel>
+    
 </Window>
