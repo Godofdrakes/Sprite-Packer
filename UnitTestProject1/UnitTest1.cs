@@ -15,8 +15,10 @@ namespace UnitTestProject1 {
 
         [TestCategory( "SpriteImage" ), TestCategory( "Constructor" ), TestMethod( )]
         public void SpriteImage_Construct( ) {
+            SpriteImage image = null;
+
             // Test default constructor.
-            SpriteImage image = new SpriteImage( );
+            image = new SpriteImage( );
 
             Assert.AreEqual( typeof( SpriteImage ).ToString( ), image.Name, "image.Name should construct to the name of the class." );
             Assert.IsNull( image.Image, "image.Image should construct to null" );
@@ -28,6 +30,19 @@ namespace UnitTestProject1 {
 
             Assert.AreEqual( "TEST", image.Name, "image.Name should have been set to the value provided in the in-line constructor" );
             Assert.IsNotNull( image.Image, "image.Image should have been set to the value provided in the in-line constructor" );
+            Assert.AreEqual( 32, image.Width, "image.Width should return the width of the image it contains" );
+            Assert.AreEqual( 64, image.Height, "image.Height should return the height of the image it contains" );
+
+            // Test xml constructor
+            XElement spriteXML = new XElement("Image",
+                                 new XAttribute("Name", "Test"),
+                                 new XElement("Size", new XAttribute("Width", 32), new XAttribute("Height",64)),
+                                 new XElement("Position", new XAttribute("X", 1), new XAttribute("Y",2)));
+
+            image = new SpriteImage( spriteXML, BitmapFactory.New( 128, 128 ) );
+
+            Assert.AreEqual( "Test", image.Name, "image.Name should have been set to the value provided in the xml constructor" );
+            Assert.IsNotNull( image.Image, "image.Image should have been set to the value provided in the xml constructor" );
             Assert.AreEqual( 32, image.Width, "image.Width should return the width of the image it contains" );
             Assert.AreEqual( 64, image.Height, "image.Height should return the height of the image it contains" );
         }
@@ -65,25 +80,27 @@ namespace UnitTestProject1 {
             int padding = 5;
             XElement expected = new XElement( "Animation" );
             expected.Add( new XAttribute( "Name", "TEST" ) );
+            expected.Add( new XAttribute( "Count", 0 ) );
             XElement animSprites = new XElement( "Sprites" );
-            animSprites.Add( new XAttribute( "Count", 0 ) );
             expected.Add( animSprites );
             SpriteAnimation anim = new SpriteAnimation( ) { Name = "TEST" };
             XElement actual = anim.ToXElement( padding );
 
             // XML does not have equality. Must manually check.
             Assert.AreEqual( expected.Attribute( "Name" ).Value, actual.Attribute( "Name" ).Value, "Name check failed" );
-            Assert.AreEqual( expected.Element( "Sprites" ).Attribute( "Count" ).Value, actual.Element( "Sprites" ).Attribute( "Count" ).Value, "Count check failed" );
+            Assert.AreEqual( expected.Attribute( "Count" ).Value, actual.Attribute( "Count" ).Value, "Count check failed" );
 
             // Add a sprite to the animation
             expected = new XElement( "Animation" );
             expected.Add( new XAttribute( "Name", "TEST" ) );
+            expected.Add( new XAttribute( "Count", 1 ) );
             animSprites = new XElement( "Sprites" );
-            animSprites.Add( new XAttribute( "Count", 1 ) );
             expected.Add( animSprites );
             anim.SpriteList.Add( new SpriteImage( ) { Name = "TEST", Image = BitmapFactory.New( 32, 64 ) } );
             actual = anim.ToXElement( padding );
-            Assert.AreEqual( expected.Element( "Sprites" ).Attribute( "Count" ).Value, actual.Element( "Sprites" ).Attribute( "Count" ).Value, "Count check failed" );
+            Assert.AreEqual( expected.Attribute( "Count" ).Value, actual.Attribute( "Count" ).Value, "Count check failed" );
+
+            // Test XML constructor
         }
     }
 
