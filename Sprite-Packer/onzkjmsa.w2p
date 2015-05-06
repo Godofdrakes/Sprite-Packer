@@ -24,17 +24,17 @@ namespace Sprite_Packer {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        public SpriteSheet SpriteSheet { set; get; }
+        public SpriteSheet spriteSheet { set; get; }
 
         public MainWindow( ) {
-            SpriteSheet = new SpriteSheet( ) { Padding = 5 };
-            SpriteSheet.AnimationList.Add( new SpriteAnimation( ) );
+            spriteSheet = new SpriteSheet( ) { Padding = 5 };
+            spriteSheet.AnimationList.Add( new SpriteAnimation( ) );
             DataContext = this;
 
             InitializeComponent( );
 
-            listAnimView.ItemsSource = SpriteSheet.AnimationList;
-            listAnimView.SelectedIndex = SpriteSheet.AnimationList.Count - 1;
+            listAnimView.ItemsSource = spriteSheet.AnimationList;
+            listAnimView.SelectedIndex = spriteSheet.AnimationList.Count - 1;
             listAnimView.Focus( );
         }
 
@@ -45,21 +45,21 @@ namespace Sprite_Packer {
 
                 canvasImage.Children.Clear( );
 
-                double x_size = SpriteSheet.Padding;
-                double y_size = SpriteSheet.Padding;
+                double x_size = spriteSheet.Padding;
+                double y_size = spriteSheet.Padding;
 
                 foreach( SpriteImage bar in foo.SpriteList ) {
                     Image foobar = new Image( );
                     foobar.Source = bar.Image;
 
-                    Canvas.SetTop( foobar, SpriteSheet.Padding );
+                    Canvas.SetTop( foobar, spriteSheet.Padding );
                     Canvas.SetLeft( foobar, x_size );
 
                     canvasImage.Children.Add( foobar );
 
-                    x_size += bar.Image.PixelWidth + SpriteSheet.Padding;
-                    if( y_size < SpriteSheet.Padding + SpriteSheet.Padding + bar.Image.PixelHeight ) {
-                        y_size = SpriteSheet.Padding + SpriteSheet.Padding + bar.Image.PixelHeight;
+                    x_size += bar.Image.PixelWidth + spriteSheet.Padding;
+                    if( y_size < spriteSheet.Padding + spriteSheet.Padding + bar.Image.PixelHeight ) {
+                        y_size = spriteSheet.Padding + spriteSheet.Padding + bar.Image.PixelHeight;
                     }
                 }
 
@@ -77,9 +77,9 @@ namespace Sprite_Packer {
         private void Execute_New( object sender, ExecutedRoutedEventArgs e ) {
 
             if( MessageBox.Show( (string)FindResource( "strDataLossWarning1" ) + "\n" + (string)FindResource( "strDataLossWarning2" ), "Confirm?", MessageBoxButton.OKCancel, MessageBoxImage.Question ) == MessageBoxResult.OK ) {
-                SpriteSheet = new SpriteSheet( ) { Padding = 5 };
+                spriteSheet = new SpriteSheet( ) { Padding = 5 };
                 canvasImage.Children.Clear( );
-                listAnimView.ItemsSource = SpriteSheet.AnimationList;
+                listAnimView.ItemsSource = spriteSheet.AnimationList;
                 listSpriteView.ItemsSource = null;
             }
 
@@ -92,13 +92,13 @@ namespace Sprite_Packer {
             if( MessageBox.Show( (string)FindResource( "strDataLossWarning1" ) + "\n" + (string)FindResource( "strDataLossWarning2" ), "Confirm?", MessageBoxButton.OKCancel, MessageBoxImage.Question ) == MessageBoxResult.OK ) {
                 if( openFile.ShowDialog( ) == true ) {
                     XDocument xmlDoc = XDocument.Load( openFile.FileName );
-                    SpriteSheet = new SpriteSheet( xmlDoc.Root, System.IO.Path.GetDirectoryName( openFile.FileName ) + "\\" );
+                    spriteSheet = new SpriteSheet( xmlDoc.Root, System.IO.Path.GetDirectoryName( openFile.FileName ) + "\\" );
 
                     UpdatePreview( );
 
-                    listAnimView.ItemsSource = SpriteSheet.AnimationList;
-                    if( SpriteSheet.AnimationList.Count > 0 ) {
-                        listAnimView.SelectedIndex = SpriteSheet.AnimationList.Count - 1;
+                    listAnimView.ItemsSource = spriteSheet.AnimationList;
+                    if( spriteSheet.AnimationList.Count > 0 ) {
+                        listAnimView.SelectedIndex = spriteSheet.AnimationList.Count - 1;
                     }
                     listAnimView.Focus( );
                 }
@@ -115,39 +115,46 @@ namespace Sprite_Packer {
 
                 Console.WriteLine( "Saving..." );
                 Console.WriteLine( "File: " + fileName + extension + "\nFolder: " + folder + "\\" );
+                
+                XDocument xmlDocument = new XDocument( );
+                XElement sheet = spriteSheet.ToXML( );
 
-                XElement sheet = SpriteSheet.ToXML( fileName );
-                XDocument xmlDocument = new XDocument( sheet );
-                xmlDocument.Save( saveFile.FileName, SaveOptions.None );
+                int count = 0;
 
-                for( int i = 0; i < SpriteSheet.AnimationList.Count; ++i ) {
-                    string thisFile = fileName + "_" + i.ToString( ) + ".png";
-                    WriteableBitmap animImage = SpriteSheet.AnimationList[i].BitmapExport( SpriteSheet.Padding );
+                foreach( SpriteAnimation anim in spriteSheet.AnimationList ) {
+                    XElement foo = anim.ToXElement( spriteSheet.Padding );
+                    string thisFile = fileName + "_" + count.ToString( ) + ".png";
 
-                    FileStream stream = null;
+                    foo.Add( new XAttribute( "FileName", thisFile ) );
+                    sheet.Add( foo );
+
+                    BitmapFrame animImage = BitmapFrame.Create( anim.BitmapExport( spriteSheet.Padding ) );
+                    PngBitmapEncoder encoder = new PngBitmapEncoder( );
+                    encoder.Frames.Add( animImage );
+
+                    FileStream stream_image = null;
 
                     try {
-                        BitmapFrame animBitmap = BitmapFrame.Create( animImage );
-                        PngBitmapEncoder encoder = new PngBitmapEncoder( );
-                        encoder.Frames.Add( animBitmap );
-
-                        stream = File.Create( folder + "\\" + thisFile );
-
-                        encoder.Save( stream );
-
+                        stream_image = File.Create( folder + "\\" + thisFile );
+                        encoder.Save( stream_image );
                         Console.WriteLine( "Exported Image: " + thisFile );
                     }
                     catch( Exception except ) {
                         MessageBox.Show( except.Message );
                     }
-                    finally {
-                        if( stream != null ) {
-                            stream.Close( );
-                            stream = null;
+                    finally{
+                        if( stream_image != null ) {
+                            stream_image.Close( );
+                            stream_image = null;
                         }
                     }
+                    ++count;
                 }
-                
+
+                sheet.Add( new XAttribute( "Count", count ) );
+                xmlDocument.Add( sheet );
+                xmlDocument.Save( saveFile.FileName, SaveOptions.None );
+
                 Console.WriteLine( "Done Saving!" );
             }
         }
@@ -158,8 +165,8 @@ namespace Sprite_Packer {
         }
 
         private void Execute_AnimAdd( object sender, ExecutedRoutedEventArgs e ) {
-            SpriteSheet.AnimationList.Add( new SpriteAnimation( ) );
-            listAnimView.SelectedIndex = SpriteSheet.AnimationList.Count( ) - 1;
+            spriteSheet.AnimationList.Add( new SpriteAnimation( ) );
+            listAnimView.SelectedIndex = spriteSheet.AnimationList.Count( ) - 1;
             listAnimView.Focus( );
             listSpriteView.ItemsSource = ( (SpriteAnimation)listAnimView.SelectedItem ).SpriteList;
         }
@@ -179,7 +186,7 @@ namespace Sprite_Packer {
 
                 foreach( SpriteImage sprite in anim.SpriteList ) { sprite.Image = null; }
                 anim.SpriteList.Clear( );
-                SpriteSheet.AnimationList.RemoveAt( index );
+                spriteSheet.AnimationList.RemoveAt( index );
                 --index;
             }
 
@@ -264,7 +271,7 @@ namespace Sprite_Packer {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
             int index = -1;
 
-            if( foo != null && SpriteSheet.AnimationList.Contains( foo ) ) {
+            if( foo != null && spriteSheet.AnimationList.Contains( foo ) ) {
 
                 SpriteImage bar = listSpriteView.SelectedItem as SpriteImage;
                 index = listSpriteView.SelectedIndex;
@@ -284,7 +291,7 @@ namespace Sprite_Packer {
             SpriteAnimation foo = listAnimView.SelectedItem as SpriteAnimation;
             int index = -1;
 
-            if( foo != null && SpriteSheet.AnimationList.Contains( foo ) ) {
+            if( foo != null && spriteSheet.AnimationList.Contains( foo ) ) {
 
                 SpriteImage bar = listSpriteView.SelectedItem as SpriteImage;
                 index = listSpriteView.SelectedIndex;
@@ -317,10 +324,10 @@ namespace Sprite_Packer {
             e.CanExecute = true;
         }
         private void CanExecute_DataExists( object sender, CanExecuteRoutedEventArgs e ) {
-            bool animExits = SpriteSheet.AnimationList.Count > 0; // True if any animations exist.
+            bool animExits = spriteSheet.AnimationList.Count > 0; // True if any animations exist.
 
             bool spriteExists = false;
-            foreach( SpriteAnimation anim in SpriteSheet.AnimationList ) {
+            foreach( SpriteAnimation anim in spriteSheet.AnimationList ) {
                 spriteExists = anim.SpriteList.Count > 0 || spriteExists; // Returns true if there are any sprites in the animation OR spriteExists is already true;
             }
 
@@ -522,14 +529,17 @@ namespace Sprite_Packer {
         }
 
         public XElement ToXML( string fileName ) {
-            XElement sheet = new XElement( "SpriteSheet" );
-            sheet.Add( new XAttribute( "Count", AnimationList.Count ) ); 
+            XElement sheet = new XElement("SpriteSheet");
 
-            for( int i = 0; i < AnimationList.Count; ++i ) {
+            for( int i = 0; i < AnimationList.Count ++i ) {
                 XElement animXML = AnimationList[i].ToXElement( Padding );
-                animXML.Add( new XAttribute( "FileName", fileName + "_" + i.ToString( ) + ".png" ) );
                 sheet.Add( animXML );
             }
+
+            foreach( SpriteAnimation anim in AnimationList ) {
+            }
+
+            sheet.Add( new XAttribute( "Count", AnimationList.Count ) );
 
             return sheet;
         }
