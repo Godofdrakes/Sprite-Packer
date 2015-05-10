@@ -28,7 +28,6 @@ namespace Sprite_Packer {
 
         public MainWindow( ) {
             SpriteSheet = new SpriteSheet( ) { Padding = 5 };
-            SpriteSheet.AnimationList.Add( new SpriteAnimation( ) );
             DataContext = this;
 
             InitializeComponent( );
@@ -226,11 +225,13 @@ namespace Sprite_Packer {
                     foo.SpriteList.Add( newSprite );
 #endif
                 }
-            }
 
-            UpdatePreview( );
-            listSpriteView.SelectedIndex = foo.SpriteList.Count - 1;
-            listSpriteView.Focus( );
+                UpdatePreview( );
+                if( foo.SpriteList.Count > 0 ) {
+                    listSpriteView.SelectedIndex = foo.SpriteList.Count - 1;
+                }
+                listSpriteView.Focus( );
+            }
         }
         private void Execute_SpriteRename( object sender, ExecutedRoutedEventArgs e ) {
             SpriteImage listBoxSelected = listSpriteView.SelectedItem as SpriteImage;

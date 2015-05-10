@@ -109,7 +109,7 @@
                           Command="New" />
                 <MenuItem Header="_Open"
                           Command="Open" />
-                <MenuItem Header="_Export"
+                <MenuItem Header="_Save"
                           Command="Save" />
                 <MenuItem Header="_Preview"
                           Command="Print" />
